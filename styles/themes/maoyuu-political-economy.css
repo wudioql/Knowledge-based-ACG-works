@@ -99,30 +99,6 @@
   color: var(--muted);
 }
 
-.toc-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.toc-action-btn {
-  flex: 1;
-  padding: 0.4rem 0.6rem;
-  background: rgba(245, 166, 35, 0.1);
-  color: var(--accent);
-  border: 1px solid rgba(245, 166, 35, 0.3);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toc-action-btn:hover {
-  background: var(--accent);
-  color: var(--ink-on-accent);
-  border-color: var(--accent);
-}
-
 .toc-tree {
   list-style: none;
   padding: 0;
@@ -218,7 +194,12 @@
   margin-left: 320px;
   flex: 1;
   padding: 2rem 3rem;
-  max-width: var(--content-width);
+  max-width: none;
+}
+
+/* 覆盖 core.css 的 container，让布局在桌面端更宽敞（与 sidebar 布局协调） */
+.container {
+  max-width: 1600px;
 }
 
 /* Cover / Welcome */
@@ -262,24 +243,10 @@ h2 {
 }
 
 h3 {
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: var(--ink);
-  margin: 2rem 0 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-h3 .section-toggle {
-  font-size: 0.7rem;
-  color: var(--muted);
-  transition: transform 0.2s;
-}
-
-h3.expanded .section-toggle {
-  transform: rotate(90deg);
+  margin: 1.5rem 0 0.8rem;
+  font-weight: 600;
 }
 
 h4 {
@@ -287,15 +254,6 @@ h4 {
   color: var(--ink);
   margin: 1.5rem 0 0.8rem;
   font-weight: 600;
-}
-
-/* Collapsible sections */
-.collapsible {
-  display: none;
-}
-
-.collapsible.expanded {
-  display: block;
 }
 
 /* Cards */
@@ -617,7 +575,4 @@ mark.key {
     padding: 1rem;
   }
 
-  .collapsible {
-    display: block !important;
-  }
 }
