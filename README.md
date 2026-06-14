@@ -392,4 +392,34 @@ git push origin main
 
 ---
 
-**最后更新**: 2026-06-14（完成全站骨架重构：core.css + themes/*.css + navigation.js 统一架构）
+**最后更新**: 2026-06-14（合并 trae/solo-agent-922K4i：导航交互重构 + 核心样式变量化 + 深色主题兼容修复）
+
+## 🔧 近期更新（2026-06-14 合并）
+
+### 导航交互重构
+- `scripts/navigation.js` 中的折叠/展开逻辑由直接操作 `style.display` 改为使用 `expanded` CSS 类统一控制，提升 DOM 兼容性
+- 优化了 TOC 子节点的查找逻辑，修复了章节箭头点击无法展开/收起的问题
+- `expandAll`/`collapseAll`/`toggleSection` 函数同步更新为类切换方式
+
+### 核心样式变量化
+- `styles/core.css` 新增 `--card-bg` CSS 变量，全站卡片、表格、筛选栏等组件统一使用
+- Hero 区域渐变改用 `--accent` / `--accent2` 变量组合，主题可灵活自定义
+- Hero 中的副标题和统计标签统一使用 `--ink-on-accent` 确保对比度
+
+### 深色主题兼容修复
+以下问题在合并后被发现并修复：
+
+1. **白底白字问题**：深色主题（首页、石纪元、魔王勇者）的 header/footer 曾因 `--ink` 被覆盖为浅色导致白底白字，已通过新增 `--header-bg` 变量覆盖解决
+2. **Hero 渐变色条**：《石纪元》页面的 hero 区域曾叠加了 core.css 默认渐变，现已清除，改为纯图片背景
+3. **主题变量规范化**：各主题 CSS 补全 `--card-bg` 定义，将硬编码白色替换为 CSS 变量
+
+### 受影响文件
+| 文件 | 主要变更 |
+|------|---------|
+| `scripts/navigation.js` | 折叠逻辑改用 CSS 类切换 |
+| `styles/core.css` | 新增 `--card-bg` 变量，统一组件背景色 |
+| `styles/themes/home.css` | 新增 `--header-bg`，覆盖 header/footer 深色样式 |
+| `styles/themes/dr-stone-science.css` | 新增 `--header-bg`，清除 hero 默认渐变，优化 TOC 样式 |
+| `styles/themes/maoyuu-political-economy.css` | 新增 `--header-bg` 与 `.toc-action-btn` 样式 |
+| `styles/themes/shokugeki-no-soma.css` | 补全 `--card-bg`，提升弧形卡片标题对比度 |
+| `styles/themes/tondemo-skill-food.css` | 补全 `--card-bg`，替换多处硬编码白色背景 |
