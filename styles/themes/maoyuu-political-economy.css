@@ -218,7 +218,12 @@
   margin-left: 320px;
   flex: 1;
   padding: 2rem 3rem;
-  max-width: var(--content-width);
+  max-width: none;
+}
+
+/* 覆盖 core.css 的 container，让布局在桌面端更宽敞（与 sidebar 布局协调） */
+.container {
+  max-width: 1600px;
 }
 
 /* Cover / Welcome */
