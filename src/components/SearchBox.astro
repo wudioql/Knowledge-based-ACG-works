@@ -1,0 +1,155 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+<button id="search-trigger" class="btn search-btn" aria-haspopup="dialog" aria-controls="search-dialog">
+  🔍 搜索
+</button>
+
+<dialog id="search-dialog" aria-labelledby="search-title">
+  <div class="sd-header">
+    <h2 id="search-title">搜索全站内容</h2>
+    <button id="search-close" aria-label="关闭">✕</button>
+  </div>
+  <input id="search-input" type="search" placeholder="输入作品、章节、标签、关键词..." autocomplete="off" />
+  <div id="search-results" class="pf-results"></div>
+  <p class="search-hint">输入字符后即时显示结果 · 使用 Pagefind 离线索引</p>
+</dialog>
+
+<style>
+  .search-btn {
+    margin-left: 0.6em;
+  }
+  dialog#search-dialog {
+    width: min(640px, 92vw);
+    max-height: 80vh;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--bg-color);
+    color: var(--text-main);
+    box-shadow: var(--shadow-hover);
+  }
+  dialog#search-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+  }
+  .sd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .sd-header h2 { font-size: 1.2rem; margin: 0; border: none; }
+  #search-close {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    width: 2rem; height: 2rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #search-close:hover { color: var(--accent-primary); border-color: var(--accent-primary); }
+  #search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    outline: none;
+  }
+  #search-input:focus { border-color: var(--accent-primary); }
+  .pf-results {
+    margin-top: 1rem;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+  .pf-results :global(.pagefind-result) {
+    padding: 0.8rem 1rem;
+    margin: 0.4rem 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+  }
+  .pf-results :global(.pagefind-result a) { color: var(--accent-primary); font-weight: 600; }
+  .search-hint {
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: 0.82em;
+    text-align: right;
+  }
+</style>
+
+<script is:inline>
+  // Pagefind 搜索 + 弹窗控制
+  (function () {
+    const base = document.querySelector('meta[name="base-url"]')?.content || '/';
+    const trigger = document.getElementById('search-trigger');
+    const dialog = document.getElementById('search-dialog');
+    const closeBtn = document.getElementById('search-close');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+
+    if (!trigger || !dialog) return;
+
+    function openDialog() {
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+      setTimeout(() => input.focus(), 30);
+    }
+    function closeDialog() {
+      if (typeof dialog.close === 'function') dialog.close();
+      else dialog.removeAttribute('open');
+    }
+    trigger.addEventListener('click', openDialog);
+    closeBtn?.addEventListener('click', closeDialog);
+    dialog?.addEventListener('click', (e) => {
+      if (e.target === dialog) closeDialog();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDialog();
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openDialog(); }
+    });
+
+    // 懒加载 Pagefind 库（索引在 postbuild 阶段生成）
+    let pagefind = null;
+    async function loadPagefind() {
+      if (pagefind) return pagefind;
+      try {
+        const script = document.createElement('script');
+        script.src = base + 'pagefind/pagefind.js';
+        script.async = true;
+        document.head.appendChild(script);
+        await new Promise((resolve) => { script.onload = resolve; });
+        if (window.Pagefind) pagefind = await window.Pagefind();
+      } catch (err) {
+        console.warn('Pagefind 加载失败：', err);
+      }
+      return pagefind;
+    }
+
+    input?.addEventListener('input', async () => {
+      const query = input.value.trim();
+      if (!query) { results.innerHTML = ''; return; }
+      const pf = await loadPagefind();
+      if (!pf) {
+        results.innerHTML = '<p style="color:var(--text-muted)">搜索索引未就绪，刷新页面或在本地构建后预览。</p>';
+        return;
+      }
+      const currentSearch = await pf.search(query);
+      const items = currentSearch.results;
+      if (items.length === 0) {
+        results.innerHTML = '<p style="color:var(--text-muted)">没有匹配的结果</p>';
+        return;
+      }
+      let html = '';
+      for (const item of items) {
+        const data = await item.data();
+        html += `<div class="pagefind-result"><a href="${data.url}">${data.meta.title || '未命名'}</a><p>${data.excerpt || ''}</p></div>`;
+      }
+      results.innerHTML = html;
+    });
+  })();
+</script>

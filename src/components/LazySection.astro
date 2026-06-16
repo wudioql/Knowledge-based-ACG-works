@@ -1,0 +1,45 @@
+---
+// 通过 IntersectionObserver 在滚动到视口时触发动画
+// 使用方法：在 .astro 页面里 <LazySection title="扩展资料"><div>...</div></LazySection>
+export interface Props {
+  title?: string;
+}
+const { title = '' } = Astro.props;
+---
+<section class="lazy-section" data-visible="false">
+  {title && <h2>{title}</h2>}
+  <slot />
+</section>
+
+<script is:inline>
+  // 在浏览器里用 IntersectionObserver 给进入视口的 section 加动画
+  (function () {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.dataset.visible = 'true';
+          io.unobserve(e.target);
+        }
+      }
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.lazy-section').forEach((el) => io.observe(el));
+  })();
+</script>
+
+<style>
+  .lazy-section {
+    margin: 2.5rem 0;
+    padding: 1.2rem 1.5rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .lazy-section[data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .lazy-section h2 { margin-top: 0; }
+</style>

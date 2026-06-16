@@ -1,0 +1,24 @@
+---
+export interface Props {
+  cite?: string;
+}
+const { cite } = Astro.props;
+---
+<blockquote class="mdx-quote">
+  <p><slot /></p>
+  {cite && <footer>— {cite}</footer>}
+</blockquote>
+
+<style>
+  .mdx-quote {
+    margin: 1.6rem 0;
+    padding: 1.2rem 1.5rem;
+    background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-elevated));
+    border-left: 4px solid var(--accent-primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-style: italic;
+    color: var(--text-main);
+  }
+  .mdx-quote p { margin: 0 0 0.6rem; line-height: 1.7; }
+  .mdx-quote footer { font-size: 0.9em; color: var(--text-muted); font-style: normal; }
+</style>

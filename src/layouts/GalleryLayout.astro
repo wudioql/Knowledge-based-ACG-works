@@ -1,0 +1,42 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  theme: 'ocean' | 'crimson' | 'amber';
+  pageTitle?: string;
+  description?: string;
+}
+
+const { title, theme, pageTitle, description } = Astro.props;
+---
+
+<BaseLayout title={title} theme={theme} pageTitle={pageTitle} description={description}>
+  <div class="gallery-wrap">
+    <slot />
+  </div>
+</BaseLayout>
+
+<style>
+  .gallery-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.2rem 3rem;
+  }
+  .gallery-wrap :deep(.gallery-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem;
+  }
+  .gallery-wrap :deep(.gallery-card) {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .gallery-wrap :deep(.gallery-card:hover) {
+    transform: translateY(-2px);
+    border-color: var(--accent-primary);
+  }
+</style>

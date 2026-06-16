@@ -1,0 +1,109 @@
+---
+import { slugify } from '../utils/toc';
+
+export interface Props {
+  headings: { depth: number; text: string; slug?: string }[];
+  title?: string;
+}
+
+const { headings, title = '目录' } = Astro.props;
+
+type Node = { depth: number; text: string; slug: string; children: Node[] };
+const root: Node[] = [];
+const stack: Node[] = [];
+let counter = 0;
+
+for (const h of headings) {
+  if (h.depth < 2 || h.depth > 4) continue;
+  const slug = h.slug ?? slugify(h.text) + '-' + (++counter);
+  const node: Node = { depth: h.depth, text: h.text, slug, children: [] };
+  while (stack.length > 0 && stack[stack.length - 1].depth >= h.depth) stack.pop();
+  if (stack.length === 0) root.push(node);
+  else stack[stack.length - 1].children.push(node);
+  stack.push(node);
+}
+
+function render(list: Node[]): string {
+  let html = '<ul>';
+  for (const n of list) {
+    html += `<li data-depth="${n.depth}"><a class="toc-link" href="#${n.slug}" data-target="#${n.slug}">${n.text}</a>`;
+    if (n.children.length > 0) html += render(n.children);
+    html += '</li>';
+  }
+  html += '</ul>';
+  return html;
+}
+
+const tocHtml = root.length > 0 ? render(root) : '';
+---
+
+<aside class="toc-rail" id="toc-rail" aria-label="章节目录">
+  <div class="toc-header">{title}</div>
+  <nav class="toc-body" set:html={tocHtml} />
+</aside>
+
+<style>
+  .toc-rail {
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding: 1.2rem 1rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.9em;
+  }
+  .toc-header {
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.78em;
+  }
+  .toc-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .toc-body ul ul {
+    padding-left: 0.9rem;
+    margin-top: 0.15em;
+  }
+  .toc-body li { margin: 0.18em 0; }
+  .toc-link {
+    display: block;
+    padding: 0.3em 0.7em;
+    border-left: 2px solid var(--border-color);
+    color: var(--text-muted);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    transition: all 0.15s ease;
+  }
+  .toc-link:hover {
+    color: var(--accent-primary);
+    text-decoration: none;
+    background: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+  }
+  @media (max-width: 960px) {
+    .toc-rail {
+      position: fixed;
+      top: 60px;
+      right: 1rem;
+      left: 1rem;
+      bottom: auto;
+      max-height: 70vh;
+      z-index: 100;
+      transform: translateY(-10px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-hover);
+    }
+    body.toc-open .toc-rail {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+</style>

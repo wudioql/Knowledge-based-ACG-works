@@ -1,0 +1,43 @@
+---
+export interface Props {
+  prevHref: string;
+  prevTitle: string;
+  nextHref: string;
+  nextTitle: string;
+}
+const { prevHref, prevTitle, nextHref, nextTitle } = Astro.props;
+---
+<nav class="pagination" aria-label="上下章导航">
+  <div class="pagi-cell">
+    {prevHref ? (
+      <a href={prevHref} class="btn"><span aria-hidden="true">←</span> {prevTitle}</a>
+    ) : (
+      <span class="pagi-muted">已是第一章</span>
+    )}
+  </div>
+  <span></span>
+  <div class="pagi-cell pagi-right">
+    {nextHref ? (
+      <a href={nextHref} class="btn btn-primary">{nextTitle} <span aria-hidden="true">→</span></a>
+    ) : (
+      <span class="pagi-muted">已是最后一章</span>
+    )}
+  </div>
+</nav>
+
+<style>
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 3rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+  .pagi-cell { min-width: 0; }
+  .pagi-right { text-align: right; }
+  .pagi-muted { color: var(--text-muted); font-size: 0.9em; }
+  .pagination a { text-decoration: none; }
+</style>

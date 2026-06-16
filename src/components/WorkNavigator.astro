@@ -1,0 +1,68 @@
+---
+import { getWorks } from '../utils/works';
+export interface Props {
+  currentWorkSlug?: string;
+}
+const { currentWorkSlug } = Astro.props;
+const works = await getWorks();
+const base = import.meta.env.BASE_URL;
+---
+<nav class="work-nav" aria-label="作品切换">
+  <span class="work-nav-label">作品</span>
+  <ul>
+    {works.map(w => (
+      <li>
+        <a href={base + 'works/' + w.slug + '/'} class:list={['work-link', w.slug === currentWorkSlug && 'active']}>
+          {w.data.title}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .work-nav {
+    margin: 1rem 0 2rem;
+    padding: 0.8rem 1.2rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+  }
+  .work-nav-label {
+    display: block;
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-primary);
+    font-weight: 700;
+    margin-bottom: 0.5em;
+  }
+  .work-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .work-link {
+    display: inline-block;
+    padding: 0.35em 0.9em;
+    border-radius: 999px;
+    font-size: 0.85em;
+    color: var(--text-main);
+    background: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 25%, transparent);
+    transition: all 0.15s ease;
+  }
+  .work-link:hover {
+    color: var(--accent-primary);
+    text-decoration: none;
+    background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  }
+  .work-link.active {
+    background: var(--accent-primary);
+    color: var(--bg-color);
+    border-color: var(--accent-primary);
+  }
+</style>

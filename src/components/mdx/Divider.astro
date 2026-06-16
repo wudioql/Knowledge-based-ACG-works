@@ -1,0 +1,42 @@
+---
+export interface Props {
+  text?: string;
+}
+const { text } = Astro.props;
+---
+{text ? (
+  <div class="divider-with-text" role="separator">
+    <span class="divider-line"></span>
+    <span class="divider-text">{text}</span>
+    <span class="divider-line"></span>
+  </div>
+) : (
+  <hr class="divider" />
+)}
+
+<style>
+  .divider {
+    border: none;
+    border-top: 1px dashed var(--border-color);
+    margin: 2rem 0;
+  }
+  .divider-with-text {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.2rem 0;
+    color: var(--text-muted);
+  }
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+  }
+  .divider-text {
+    font-size: 0.85em;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+  }
+</style>

@@ -1,0 +1,29 @@
+---
+export interface Props {
+  title: string;
+  icon?: string;
+  accent?: string;
+}
+const { title, icon = '✨', accent } = Astro.props;
+---
+<div class="hero-card" style={accent ? `--accent: ${accent}` : undefined}>
+  <span class="hero-card-icon" aria-hidden="true">{icon}</span>
+  <h3>{title}</h3>
+  <slot />
+</div>
+
+<style>
+  .hero-card {
+    padding: 1.4rem 1.6rem;
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg,
+        color-mix(in srgb, var(--accent) 22%, var(--bg-elevated)),
+        var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent, var(--accent-primary)) 40%, transparent);
+    margin: 1.5rem 0;
+  }
+  .hero-card-icon { font-size: 1.8rem; }
+  .hero-card h3 { margin: 0.4rem 0 0.5rem; font-size: 1.25rem; border: none; padding: 0; }
+  .hero-card :global(p:first-child) { margin-top: 0; }
+</style>

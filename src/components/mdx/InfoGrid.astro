@@ -1,0 +1,45 @@
+---
+// 键值对网格，用于角色/设定资料。子元素应成对（dt/dt 结构）
+// 用法：<InfoGrid> <pair label="身高" value="168cm" /> ... </InfoGrid>
+// 简化为：允许以任意内容作为 slot；也提供一个结构化版本
+export interface Props {
+  columns?: number;
+  items?: Array<{ label: string; value: string }>;
+}
+const { columns = 2, items = [] } = Astro.props;
+---
+<dl class="info-grid" style={`--col: ${columns}`}>
+  {items.map((it) => (
+    <>
+      <dt>{it.label}</dt>
+      <dd>{it.value}</dd>
+    </>
+  ))}
+  <slot />
+</dl>
+
+<style>
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--col), max-content 1fr);
+    gap: 0.4rem 1.2rem;
+    margin: 1.4rem 0;
+    padding: 1.2rem 1.4rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+  }
+  .info-grid dt {
+    color: var(--accent-primary);
+    font-weight: 600;
+    font-size: 0.9em;
+  }
+  .info-grid dd {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 0.92em;
+  }
+  @media (max-width: 640px) {
+    .info-grid { grid-template-columns: max-content 1fr; }
+  }
+</style>

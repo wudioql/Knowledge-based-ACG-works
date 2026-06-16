@@ -1,0 +1,214 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+
+export interface Props {
+  title: string;
+  theme: 'ocean' | 'crimson' | 'amber';
+  pageTitle?: string;
+  description?: string;
+  headings: { depth: number; text: string; slug?: string }[];
+  sideNavHtml?: string;
+}
+
+const { title, theme, pageTitle, description, headings, sideNavHtml } = Astro.props;
+---
+
+<BaseLayout title={title} theme={theme} pageTitle={pageTitle} description={description}>
+  <button class="toc-toggle" id="toc-toggle" aria-label="切换目录">
+    <span aria-hidden="true">☰</span> <span class="label">目录</span>
+  </button>
+  <div class="doc-grid">
+    <aside class="side-nav">
+      {sideNavHtml ? (
+        <div class="side-nav-inner" set:html={sideNavHtml} />
+      ) : <p style="color:var(--text-muted)">无章节</p>}
+    </aside>
+    <main class="doc-main">
+      <slot />
+    </main>
+    <div class="toc-col">
+      <TableOfContents headings={headings} />
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+(function () {
+  let observer = null;
+  let rafId = null;
+
+  function setup() {
+    const toggle = document.getElementById('toc-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        document.body.classList.toggle('toc-open');
+      });
+      document.addEventListener('click', function (e) {
+        if (!document.body.classList.contains('toc-open')) return;
+        const rail = document.getElementById('toc-rail');
+        if (rail && rail.contains(e.target)) return;
+        if (toggle.contains(e.target)) return;
+        document.body.classList.remove('toc-open');
+      });
+    }
+
+    const links = Array.from(document.querySelectorAll('.toc-link'));
+    if (links.length === 0) return;
+
+    links.forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        const href = link.getAttribute('href') || '';
+        if (!href.startsWith('#')) return;
+        e.preventDefault();
+        const id = href.slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', '#' + id);
+          document.body.classList.remove('toc-open');
+        }
+      });
+    });
+
+    const hEls = [];
+    const map = new Map();
+    for (const link of links) {
+      const target = link.getAttribute('data-target') || link.getAttribute('href') || '';
+      if (!target.startsWith('#')) continue;
+      const id = target.slice(1);
+      const h = document.getElementById(id);
+      if (h) {
+        hEls.push(h);
+        map.set(id, link);
+      }
+    }
+    if (hEls.length === 0) return;
+
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver(
+      function (entries) {
+        const visible = entries
+          .filter(function (e) { return e.isIntersecting; })
+          .sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+        if (visible.length > 0) {
+          const id = visible[0].target.id;
+          if (rafId) cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(function () {
+            links.forEach(function (l) { l.classList.remove('toc-link-active'); });
+            const link = map.get(id);
+            if (link) link.classList.add('toc-link-active');
+          });
+        }
+      },
+      { rootMargin: '-120px 0px -70% 0px', threshold: [0, 1] }
+    );
+    hEls.forEach(function (h) { observer.observe(h); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup, { once: true });
+  } else {
+    setup();
+  }
+  document.addEventListener('astro:page-load', setup);
+  document.addEventListener('astro:after-swap', setup);
+})();
+</script>
+
+<style>
+  .toc-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 60;
+    padding: 0.55em 1em;
+    border: 1px solid var(--border-color);
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  .toc-toggle:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+  @media (max-width: 960px) {
+    .toc-toggle { display: inline-flex; align-items: center; gap: 0.35em; }
+  }
+
+  .doc-grid {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) 240px;
+    gap: 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem 1.2rem 3rem;
+  }
+  .side-nav {
+    position: sticky;
+    top: 80px;
+    align-self: start;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.9em;
+  }
+  .side-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .side-nav li {
+    margin: 0.25em 0;
+  }
+  .side-nav a {
+    display: block;
+    padding: 0.3em 0.7em;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+  }
+  .side-nav a:hover,
+  .side-nav a.active {
+    color: var(--accent-primary);
+    background: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+    text-decoration: none;
+  }
+  .side-nav .side-nav-title {
+    display: block;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.78em;
+  }
+  .doc-main {
+    min-width: 0;
+    padding: 0 0.5rem;
+  }
+  .doc-main > article {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .toc-col { align-self: start; }
+
+  @media (max-width: 1100px) {
+    .doc-grid {
+      grid-template-columns: 180px minmax(0, 1fr);
+    }
+    .toc-col { display: none; }
+  }
+  @media (max-width: 720px) {
+    .doc-grid {
+      grid-template-columns: 1fr;
+    }
+    .side-nav {
+      position: static;
+      max-height: none;
+    }
+  }
+</style>

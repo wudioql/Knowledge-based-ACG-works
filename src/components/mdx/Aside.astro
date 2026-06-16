@@ -1,0 +1,36 @@
+---
+export interface Props {
+  title?: string;
+  position?: 'right' | 'left';
+}
+const { title, position = 'right' } = Astro.props;
+---
+<aside class:list={['mdx-aside', `aside-${position}`]}>
+  {title && <strong class="mdx-aside-title">{title}</strong>}
+  <slot />
+</aside>
+
+<style>
+  .mdx-aside {
+    padding: 1rem 1.2rem;
+    background: color-mix(in srgb, #818cf8 14%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, #818cf8 35%, transparent);
+    border-radius: var(--radius);
+    margin: 1.4rem 0;
+    font-size: 0.92em;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .mdx-aside-title {
+    display: block;
+    color: var(--accent-secondary);
+    margin-bottom: 0.3em;
+    font-size: 0.95em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  @media (min-width: 960px) {
+    .aside-right { float: right; max-width: 260px; margin-left: 1.5rem; margin-top: 0; }
+    .aside-left { float: left; max-width: 260px; margin-right: 1.5rem; margin-top: 0; }
+  }
+</style>

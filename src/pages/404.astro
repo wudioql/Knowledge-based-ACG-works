@@ -1,0 +1,19 @@
+---
+import '../styles/theme.css';
+const base = import.meta.env.BASE_URL;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>页面未找到 · ACG Wiki</title>
+  </head>
+  <body class="theme-ocean">
+    <main class="container" style="padding: 4rem 1.2rem; text-align: center;">
+      <h1 style="font-size:3rem;color:var(--accent-primary);margin:0">404</h1>
+      <p style="color:var(--text-muted);font-size:1.1em">你寻找的章节可能在另一个世界线中。</p>
+      <p><a href={base} class="btn btn-primary">回到首页</a></p>
+    </main>
+  </body>
+</html>

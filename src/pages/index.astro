@@ -1,0 +1,350 @@
+---
+import '../styles/theme.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WorkNavigator from '../components/WorkNavigator.astro';
+import { getWorks, getChapters } from '../utils/works';
+
+const works = await getWorks();
+const base = import.meta.env.BASE_URL;
+
+// 为每个作品统计章节数，用于卡片展示
+const worksWithStats = await Promise.all(
+  works.map(async (w) => {
+    const chapters = await getChapters(w.slug);
+    return {
+      work: w,
+      chapterCount: chapters.length,
+      firstChapter: chapters[0],
+    };
+  }),
+);
+---
+<BaseLayout title="ACG Knowledge Wiki" theme="ocean" pageTitle="首页" description="基于 Astro 的 ACG 作品知识库，支持多主题、视图过渡与离线索引搜索。">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">📚 静态知识库 · Powered by Astro & Pagefind</p>
+      <h1 class="hero-title">
+        <span class="highlight">ACG</span> 作品
+        <br />
+        结构化知识库
+      </h1>
+      <p class="hero-sub">
+        将动画、漫画、游戏（ACG）的世界观、角色、剧情时间线拆分为独立章节，
+        <br class="hero-break" />
+        通过多主题与 View Transitions 提供沉浸式的阅读体验。
+      </p>
+      <div class="hero-cta">
+        <a href={base + 'works/'} class="btn btn-primary">浏览全部作品 →</a>
+        <button id="hero-search" class="btn">🔍 搜索关键词</button>
+      </div>
+      <div class="hero-stats">
+        <div><strong>{works.length}</strong><span>作品</span></div>
+        <div><strong>{worksWithStats.reduce((s, w) => s + w.chapterCount, 0)}</strong><span>章节</span></div>
+        <div><strong>3</strong><span>主题</span></div>
+        <div><strong>3</strong><span>布局</span></div>
+      </div>
+    </div>
+    <div class="hero-deco" aria-hidden="true"></div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="section-inner">
+      <h2 class="section-title">核心特性</h2>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <h3>按章节拆分</h3>
+          <p>每个作品按章节粒度管理，易于维护与更新；新增章节只需新增一份 .mdx 文件。</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>多主题调色板</h3>
+          <p>Ocean / Crimson / Amber 三套 CSS 变量主题，适合科幻、战斗、幻想等不同作品氛围。</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">📖</div>
+          <h3>三套布局模板</h3>
+          <p>文档型（三栏）、图鉴型（响应式网格）、编年史型（时间线），覆盖常见内容组织。</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">🔎</div>
+          <h3>离线索引搜索</h3>
+          <p>基于 Pagefind 在构建时生成静态索引；无需后端即可全站全文检索。</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>SPA 级切换</h3>
+          <p>通过 Astro View Transitions 在同一作品内跨章节、甚至跨作品平滑切换，无白屏刷新。</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>一键部署</h3>
+          <p>GitHub Pages Actions 自动构建并发布；配置 `BASE_PATH` 支持子路径部署。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works -->
+  <section class="works-section" id="works">
+    <div class="section-inner">
+      <h2 class="section-title">作品库</h2>
+      <p class="section-sub">点击卡片进入作品首页，查看其完整章节目录。</p>
+      <WorkNavigator />
+      <div class="works-grid">
+        {worksWithStats.map(({ work, chapterCount, firstChapter }) => {
+          const workHref = base + 'works/' + work.slug + '/';
+          const palette = work.data.defaultThemePalette;
+          return (
+            <a class={`work-card theme-card-${palette}`} href={workHref} style={`--accent: var(--accent-primary)`}>
+              <div class="work-card-cover">
+                <span class="work-card-initials">{work.data.title.slice(0, 2)}</span>
+              </div>
+              <div class="work-card-body">
+                <h3>{work.data.title}</h3>
+                {work.data.summary && <p>{work.data.summary}</p>}
+                <div class="work-card-meta">
+                  <span class="tag">📚 {chapterCount} 章</span>
+                  {work.data.tags.slice(0, 3).map((t) => <span class="tag">{t}</span>)}
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="section-inner">
+      <h2>想贡献或新增一个作品？</h2>
+      <p>在 <code>src/content/works/</code> 与 <code>src/content/chapters/&lt;slug&gt;/</code> 添加 Markdown 即可，无需修改代码。</p>
+      <a href={base + 'works/'} class="btn btn-primary">浏览所有作品 →</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  // Hero "搜索" 按钮 — 打开站内搜索弹窗
+  document.getElementById('hero-search')?.addEventListener('click', () => {
+    const trigger = document.getElementById('search-trigger');
+    if (trigger) trigger.click();
+  });
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 1.2rem 6rem;
+    background:
+      radial-gradient(ellipse at 20% 10%, color-mix(in srgb, #38bdf8 30%, transparent), transparent 50%),
+      radial-gradient(ellipse at 80% 40%, color-mix(in srgb, #818cf8 30%, transparent), transparent 55%),
+      linear-gradient(180deg, #0b1224 0%, #0f172a 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-eyebrow {
+    display: inline-block;
+    padding: 0.4em 1em;
+    background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, transparent);
+    color: var(--accent-primary);
+    border-radius: 999px;
+    font-size: 0.85em;
+    letter-spacing: 0.02em;
+    margin: 0 0 1.5rem;
+  }
+  .hero-title {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 0 0 1.2rem;
+    letter-spacing: -0.01em;
+  }
+  .highlight {
+    background: linear-gradient(120deg, #38bdf8, #818cf8, #f43f5e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.7;
+    max-width: 760px;
+    margin: 0 auto 2.2rem;
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+  .hero-cta .btn { padding: 0.75rem 1.5rem; font-size: 1rem; }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.8rem;
+  }
+  .hero-stats > div {
+    text-align: center;
+  }
+  .hero-stats strong {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-primary);
+    line-height: 1;
+  }
+  .hero-stats span {
+    font-size: 0.85em;
+    color: var(--text-muted);
+  }
+  .hero-deco {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.08) 0, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(244, 63, 94, 0.08) 0, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Section base */
+  section { padding: 4rem 1.2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-title {
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    font-weight: 800;
+    text-align: center;
+    margin: 0 0 0.5rem;
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--text-muted);
+    margin: 0 0 2rem;
+  }
+
+  /* Features grid */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+  }
+  .feature-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.6rem;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .feature-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-primary);
+    box-shadow: var(--shadow-hover);
+  }
+  .feature-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .feature-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .feature-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.92em;
+    line-height: 1.65;
+  }
+
+  /* Works grid */
+  .works-section { background: var(--bg-elevated); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1rem;
+  }
+  .work-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    overflow: hidden;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    color: var(--text-main);
+  }
+  .work-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-primary);
+    box-shadow: var(--shadow-hover);
+    text-decoration: none;
+  }
+  .work-card-cover {
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent-primary) 35%, var(--bg-color)), color-mix(in srgb, var(--accent-secondary) 30%, var(--bg-color)));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .work-card-initials {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    letter-spacing: 0.05em;
+  }
+  .work-card-body {
+    padding: 1.2rem 1.4rem 1.4rem;
+  }
+  .work-card-body h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .work-card-body p {
+    margin: 0 0 0.8rem;
+    color: var(--text-muted);
+    font-size: 0.92em;
+    line-height: 1.6;
+  }
+  .work-card-meta { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tag {
+    display: inline-block;
+    font-size: 0.75em;
+    padding: 0.2em 0.7em;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+    color: var(--accent-primary);
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, transparent);
+  }
+
+  /* CTA */
+  .cta { text-align: center; }
+  .cta code {
+    background: var(--bg-elevated);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    color: var(--accent-primary);
+    font-size: 0.9em;
+  }
+  .cta .btn { margin-top: 1rem; padding: 0.75rem 1.8rem; font-size: 1rem; }
+
+  @media (max-width: 640px) {
+    .hero-break { display: none; }
+    .hero { padding: 3.5rem 1.2rem 4.5rem; }
+  }
+</style>
