@@ -100,17 +100,24 @@ section[id],
 div[id] { scroll-margin-top: 6rem; }
 
 .skip-link {
-  position: absolute;
+  position: fixed;
   left: 1rem;
-  top: -3rem;
+  top: 1rem;
   background: var(--atlas-ink);
   color: #fff;
   padding: 0.7rem 1rem;
   border-radius: 999px;
   z-index: 1000;
+  transform: translateY(calc(-100% - 1.5rem));
+  opacity: 0;
+  transition: transform 0.16s ease, opacity 0.16s ease;
 }
 
-.skip-link:focus { top: 1rem; }
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
 
 .atlas-shell {
   width: min(var(--atlas-shell), calc(100% - 2rem));
