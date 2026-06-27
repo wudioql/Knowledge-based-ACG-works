@@ -524,6 +524,25 @@ def render_domains_section(domains: list[dict[str, object]], section: dict[str, 
 
 def render_works_section(data: dict[str, object], works: list[dict[str, object]], filters: dict[str, list[dict[str, object]]]) -> str:
     section = data["sections"]["worksIndex"]
+
+    # Domain pills for works-index — compact strip style (no dot, smaller text)
+    domain_pills_wi = ['<button class="atlas-wi-pill is-active" data-domain="all">全部</button>']
+    for d in data["domains"]:
+        did = d["id"]
+        domain_pills_wi.append(
+            f'<button class="atlas-wi-pill" data-domain="{e(did)}">{e(d["title"])}</button>'
+        )
+
+    # Medium chips for works-index — compact strip style; skip "all" (already added manually)
+    medium_chips_wi = []
+    for m in data["filters"]["medium"]:
+        if m["value"] == "all":
+            continue  # added manually below
+        active_cls = " is-active" if m.get("active") else ""
+        medium_chips_wi.append(
+            f'<button class="atlas-wi-chip{active_cls}" data-medium="{e(m["value"])}">{e(m["label"])}</button>'
+        )
+
     rows = []
     for w in works:
         colors = [HERO_THEME_COLORS.get(d, "#5c687a") for d in w["domains"]]
@@ -540,8 +559,11 @@ def render_works_section(data: dict[str, object], works: list[dict[str, object]]
         scale = e(meta[0]["value"]) if len(meta) > 0 else ""
         structure = e(meta[1]["value"]) if len(meta) > 1 else ""
         start_here = e(meta[2]["value"]) if len(meta) > 2 else ""
+        # data attributes for JS filtering
+        domains_attr = ",".join(w["domains"])
+        mediums_attr = ",".join(w["medium"])
         rows.append(
-            f"""<div class="atlas-work-row" tabindex="0" style="--atlas-row-accent-bg:{stripe}">
+            f"""<div class="atlas-work-row" tabindex="0" data-domain="{e(domains_attr)}" data-medium="{e(mediums_attr)}" style="--atlas-row-accent-bg:{stripe}">
         <div>
           <div class="atlas-work-row__title">{e(w['title'])}</div>
           <div class="atlas-work-row__sub">{e(w['sub'])} · {domain_labels_str}</div>
@@ -563,6 +585,19 @@ def render_works_section(data: dict[str, object], works: list[dict[str, object]]
           <p class="atlas-section__kicker">{e(section['kicker'])}</p>
           <h2 class="atlas-section__title">{e(section['title'])}</h2>
           <p class="atlas-section__desc">{e(section['description'])}</p>
+        </div>
+      </div>
+      <div class="atlas-works-filters" id="atlas-works-index-filters">
+        <div class="atlas-wi-strip">
+          <div class="atlas-wi-group" role="group" aria-label="按领域筛选">
+            <span class="atlas-wi-label">领域</span>
+            {' '.join(domain_pills_wi)}
+          </div>
+          <div class="atlas-wi-group" role="group" aria-label="按媒介筛选">
+            <span class="atlas-wi-label">媒介</span>
+            <button class="atlas-wi-chip is-active" data-medium="all">全部</button> {' '.join(medium_chips_wi)}
+          </div>
+          <span class="atlas-works-meta">{total} 部</span>
         </div>
       </div>
       <div class="atlas-works-list" id="atlas-works-list">

@@ -21,7 +21,7 @@
 
   var activeDomain = 'all', activeMedium = 'all', activeFolder = null;
 
-  /* ==================== Rack ==================== */
+  /* ==================== Works Data ==================== */
   var rackEl = document.getElementById('atlas-rack');
   var detailTitle = document.getElementById('atlas-detail-title');
   var detailSummary = document.getElementById('atlas-detail-summary');
@@ -85,6 +85,49 @@
     if (activeFolder && !visible.some(function (v) { return v.folder === activeFolder; })) clearDetail();
   }
 
+  /* ==================== Works List ==================== */
+  var worksListEl = document.getElementById('atlas-works-list');
+
+  function renderWorksList() {
+    if (!worksListEl) return;
+    var cards = worksListEl.querySelectorAll('.atlas-work-row');
+    Array.prototype.forEach.call(cards, function (card) {
+      var cardDomains = card.getAttribute('data-domain') || '';
+      var cardMediums = card.getAttribute('data-medium') || '';
+      var domains = cardDomains ? cardDomains.split(',') : [];
+      var mediums = cardMediums ? cardMediums.split(',') : [];
+      var domainMatch = activeDomain === 'all' || domains.indexOf(activeDomain) !== -1;
+      var mediumMatch = activeMedium === 'all' || mediums.indexOf(activeMedium) !== -1;
+      card.style.display = (domainMatch && mediumMatch) ? '' : 'none';
+    });
+    var meta = worksListEl.querySelector('.atlas-works-meta');
+    if (meta) {
+      var visibleCount = worksListEl.querySelectorAll('.atlas-work-row:not([style*="display: none"])').length;
+      meta.textContent = visibleCount + ' / ' + worksData.length + ' 部';
+    }
+  }
+
+  function syncFilterUI() {
+    // Hero bar: .atlas-domain-pill + .atlas-medium-chip (unchanged)
+    var pills = document.querySelectorAll('#atlas-domain-bar .atlas-domain-pill');
+    Array.prototype.forEach.call(pills, function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-domain') === activeDomain);
+    });
+    var chips = document.querySelectorAll('#atlas-medium-chips .atlas-medium-chip');
+    Array.prototype.forEach.call(chips, function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-medium') === activeMedium);
+    });
+    // Works-index bar: .atlas-wi-pill + .atlas-wi-chip
+    var wiPills = document.querySelectorAll('#atlas-works-index-filters .atlas-wi-pill');
+    Array.prototype.forEach.call(wiPills, function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-domain') === activeDomain);
+    });
+    var wiChips = document.querySelectorAll('#atlas-works-index-filters .atlas-wi-chip');
+    Array.prototype.forEach.call(wiChips, function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-medium') === activeMedium);
+    });
+  }
+
   function esc(s) { return String(s).replace(/[&<>"']/g, function (m) { return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; }); }
 
   function showDetail(w, el) {
@@ -113,15 +156,26 @@
   }
 
   /* ==================== Filters ==================== */
+  function applyDomainFilter(btn) {
+    activeDomain = btn.getAttribute('data-domain');
+    syncFilterUI();
+    renderRack(); clearDetail();
+    renderWorksList();
+  }
+
+  function applyMediumFilter(btn) {
+    activeMedium = btn.getAttribute('data-medium');
+    syncFilterUI();
+    renderRack(); clearDetail();
+    renderWorksList();
+  }
+
   var domainBar = document.getElementById('atlas-domain-bar');
   if (domainBar) {
     domainBar.addEventListener('click', function (e) {
       var btn = e.target.closest('.atlas-domain-pill');
       if (!btn) return;
-      activeDomain = btn.getAttribute('data-domain');
-      var pills = document.querySelectorAll('.atlas-domain-pill');
-      Array.prototype.forEach.call(pills, function (b) { b.classList.toggle('is-active', b === btn); });
-      renderRack(); clearDetail();
+      applyDomainFilter(btn);
     });
   }
 
@@ -130,10 +184,18 @@
     mediumChips.addEventListener('click', function (e) {
       var btn = e.target.closest('.atlas-medium-chip');
       if (!btn) return;
-      activeMedium = btn.getAttribute('data-medium');
-      var chips = document.querySelectorAll('.atlas-medium-chip');
-      Array.prototype.forEach.call(chips, function (b) { b.classList.toggle('is-active', b === btn); });
-      renderRack(); clearDetail();
+      applyMediumFilter(btn);
+    });
+  }
+
+  // Also attach filter listeners to the works-index filter bar
+  var worksIndexFilterBar = document.getElementById('atlas-works-index-filters');
+  if (worksIndexFilterBar) {
+    worksIndexFilterBar.addEventListener('click', function (e) {
+      var pillBtn = e.target.closest('.atlas-wi-pill');
+      if (pillBtn) { applyDomainFilter(pillBtn); return; }
+      var chipBtn = e.target.closest('.atlas-wi-chip');
+      if (chipBtn) { applyMediumFilter(chipBtn); return; }
     });
   }
 
@@ -175,11 +237,9 @@
         var key = card.getAttribute('data-domain-key');
         if (!key) return;
         activeDomain = key;
-        var pills = document.querySelectorAll('.atlas-domain-pill');
-        Array.prototype.forEach.call(pills, function (b) {
-          b.classList.toggle('is-active', b.getAttribute('data-domain') === key);
-        });
+        syncFilterUI();
         renderRack(); clearDetail();
+        renderWorksList();
         var hero = document.querySelector('.atlas-hero');
         if (hero) hero.scrollIntoView({ behavior: 'smooth' });
       });
@@ -216,4 +276,5 @@
 
   /* ==================== Init ==================== */
   renderRack();
+  renderWorksList();
 })();

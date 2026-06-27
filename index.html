@@ -136,8 +136,21 @@
           <p class="atlas-section__desc">按作品浏览全部手册，每张卡片附起读提示。将鼠标移到卡片上可查看规模与结构亮点。</p>
         </div>
       </div>
+      <div class="atlas-works-filters" id="atlas-works-index-filters">
+        <div class="atlas-wi-strip">
+          <div class="atlas-wi-group" role="group" aria-label="按领域筛选">
+            <span class="atlas-wi-label">领域</span>
+            <button class="atlas-wi-pill is-active" data-domain="all">全部</button> <button class="atlas-wi-pill" data-domain="life">生命、医学与公共卫生</button> <button class="atlas-wi-pill" data-domain="food">食物、料理与食材</button> <button class="atlas-wi-pill" data-domain="micro">微生物、发酵与农食系统</button> <button class="atlas-wi-pill" data-domain="society">政治、经济与制度</button> <button class="atlas-wi-pill" data-domain="history">历史、文明与社会结构</button> <button class="atlas-wi-pill" data-domain="space">科幻、工程与宇宙</button>
+          </div>
+          <div class="atlas-wi-group" role="group" aria-label="按媒介筛选">
+            <span class="atlas-wi-label">媒介</span>
+            <button class="atlas-wi-chip is-active" data-medium="all">全部</button> <button class="atlas-wi-chip" data-medium="novel">小说</button> <button class="atlas-wi-chip" data-medium="manga">漫画</button> <button class="atlas-wi-chip" data-medium="anime">动画</button> <button class="atlas-wi-chip" data-medium="game">游戏</button>
+          </div>
+          <span class="atlas-works-meta">5 部</span>
+        </div>
+      </div>
       <div class="atlas-works-list" id="atlas-works-list">
-        <div class="atlas-work-row" tabindex="0" style="--atlas-row-accent-bg:#18968b">
+        <div class="atlas-work-row" tabindex="0" data-domain="life" data-medium="manga,anime" style="--atlas-row-accent-bg:#18968b">
         <div>
           <div class="atlas-work-row__title">工作细胞</div>
           <div class="atlas-work-row__sub">身体与生命知识手册 · 生命、医学与公共卫生</div>
@@ -150,7 +163,7 @@
           <div><strong>结构亮点</strong>原作分卷 + 外传矩阵 + 指导书入口，适合按主题扩展。</div>
         </div>
       </div>
-      <div class="atlas-work-row" tabindex="0" style="--atlas-row-accent-bg:#d56a1b">
+      <div class="atlas-work-row" tabindex="0" data-domain="food" data-medium="manga,anime" style="--atlas-row-accent-bg:#d56a1b">
         <div>
           <div class="atlas-work-row__title">食戟之灵</div>
           <div class="atlas-work-row__sub">料理内容全鉴 · 食物、料理与食材</div>
@@ -163,7 +176,7 @@
           <div><strong>结构亮点</strong>按篇章梳理料理与技法，适合按菜系、比赛与主题推进阅读。</div>
         </div>
       </div>
-      <div class="atlas-work-row" tabindex="0" style="--atlas-row-accent-bg:linear-gradient(to bottom, #6a9d32 0.0% 50.0%, #d56a1b 50.0% 100.0%)">
+      <div class="atlas-work-row" tabindex="0" data-domain="micro,food" data-medium="manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #6a9d32 0.0% 50.0%, #d56a1b 50.0% 100.0%)">
         <div>
           <div class="atlas-work-row__title">萌菌物语</div>
           <div class="atlas-work-row__sub">微生物知识全鉴 · 微生物、发酵与农食系统 · 食物、料理与食材</div>
@@ -176,7 +189,7 @@
           <div><strong>结构亮点</strong>分卷全鉴 + 三方对照，适合从基础菌学一路读到酒与食文化。</div>
         </div>
       </div>
-      <div class="atlas-work-row" tabindex="0" style="--atlas-row-accent-bg:linear-gradient(to bottom, #c24b6b 0.0% 50.0%, #a76a2a 50.0% 100.0%)">
+      <div class="atlas-work-row" tabindex="0" data-domain="society,history" data-medium="novel,manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #c24b6b 0.0% 50.0%, #a76a2a 50.0% 100.0%)">
         <div>
           <div class="atlas-work-row__title">魔王勇者</div>
           <div class="atlas-work-row__sub">政治经济学知识手册 · 政治、经济与制度 · 历史、文明与社会结构</div>
@@ -189,7 +202,7 @@
           <div><strong>结构亮点</strong>分卷阅读 + 辅助卷宗，适合把情节、术语、势力与参考材料一起读。</div>
         </div>
       </div>
-      <div class="atlas-work-row" tabindex="0" style="--atlas-row-accent-bg:#3f66d8">
+      <div class="atlas-work-row" tabindex="0" data-domain="space" data-medium="manga,anime" style="--atlas-row-accent-bg:#3f66d8">
         <div>
           <div class="atlas-work-row__title">星空清理者</div>
           <div class="atlas-work-row__sub">航天科学知识手册 · 科幻、工程与宇宙</div>
@@ -216,23 +229,19 @@
       <div class="atlas-paths-grid">
         <div class="atlas-path-card">
         <div class="atlas-path-card__num">01</div>
-        <div><h3>快速上手</h3><p>先看书架与知识地图，再打开一部作品首页，快速判断是否适合自己。</p></div>
+        <div><h3>随手逛逛</h3><p>先扫一眼书架和知识地图，随手点开一部作品首页——如果觉得对味，再继续往下读。</p></div>
       </div>
       <div class="atlas-path-card">
         <div class="atlas-path-card__num">02</div>
-        <div><h3>领域优先</h3><p>先看知识地图，选定一个最感兴趣的领域，再从该领域下任选一部作品首页进入。</p></div>
+        <div><h3>主题切入</h3><p>对生命、料理、制度史或宇宙工程好奇？先在知识地图选定领域，再用一部作品当入门载体。</p></div>
       </div>
       <div class="atlas-path-card">
         <div class="atlas-path-card__num">03</div>
-        <div><h3>媒介优先</h3><p>先用作品索引里的媒介筛选找到自己最熟悉的入口形式，再决定深入哪一部手册。</p></div>
+        <div><h3>单册深读</h3><p>选中一部作品后，从首页总览进入主线内容，最后用术语、参考和人物页回查补全。</p></div>
       </div>
       <div class="atlas-path-card">
         <div class="atlas-path-card__num">04</div>
-        <div><h3>单册深入</h3><p>先看作品首页，再进入首个内容页，最后回到术语、参考、人物或辅助页做补充。</p></div>
-      </div>
-      <div class="atlas-path-card">
-        <div class="atlas-path-card__num">05</div>
-        <div><h3>横向比较</h3><p>先锁定一个领域，再依次打开该领域下的多部作品首页，比较它们的知识切口、结构和标签。</p></div>
+        <div><h3>跨作对照</h3><p>锁定一个知识领域，同时打开多部作品，比较不同叙事切入同一现实问题的角度。</p></div>
       </div>
       </div>
     </div>
