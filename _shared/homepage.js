@@ -19,6 +19,14 @@
     return (DOMAIN_META[key] && DOMAIN_META[key].colorHex) || '#8a94a6';
   }
 
+  function domainLabel(key) {
+    return (DOMAIN_META[key] && DOMAIN_META[key].label) || key;
+  }
+
+  function domainDisciplines(key) {
+    return (DOMAIN_META[key] && DOMAIN_META[key].disciplines) || [];
+  }
+
   var activeDomain = 'all', activeMedium = 'all', activeFolder = null;
 
   /* ==================== Works Data ==================== */
@@ -27,6 +35,25 @@
   var detailSummary = document.getElementById('atlas-detail-summary');
   var detailTags = document.getElementById('atlas-detail-tags');
   var detailCta = document.getElementById('atlas-detail-cta');
+  var domainDisciplinesEl = document.getElementById('atlas-domain-disciplines');
+  var wiDisciplinesEl = document.getElementById('atlas-wi-disciplines');
+
+  function updateDisciplinesPanel(el) {
+    if (!el) return;
+    if (activeDomain === 'all') {
+      el.hidden = true;
+      el.innerHTML = '';
+      return;
+    }
+    var items = domainDisciplines(activeDomain);
+    if (!items.length) {
+      el.hidden = true;
+      el.innerHTML = '';
+      return;
+    }
+    el.hidden = false;
+    el.innerHTML = '<strong>' + esc(domainLabel(activeDomain)) + '</strong>' + esc(items.join(' · '));
+  }
 
   function workMatches(w) {
     return (activeDomain === 'all' || w.domains.indexOf(activeDomain) !== -1) &&
@@ -100,18 +127,20 @@
       var mediumMatch = activeMedium === 'all' || mediums.indexOf(activeMedium) !== -1;
       card.style.display = (domainMatch && mediumMatch) ? '' : 'none';
     });
-    var meta = worksListEl.querySelector('.atlas-works-meta');
+    var meta = document.querySelector('#atlas-works-index-filters .atlas-works-meta');
     if (meta) {
       var visibleCount = worksListEl.querySelectorAll('.atlas-work-row:not([style*="display: none"])').length;
-      meta.textContent = visibleCount + ' / ' + worksData.length + ' 部';
+      meta.textContent = visibleCount + ' 部';
     }
   }
 
   function syncFilterUI() {
-    // Hero bar: .atlas-domain-pill + .atlas-medium-chip (unchanged)
+    // Hero bar: .atlas-domain-pill + .atlas-medium-chip
     var pills = document.querySelectorAll('#atlas-domain-bar .atlas-domain-pill');
     Array.prototype.forEach.call(pills, function (b) {
-      b.classList.toggle('is-active', b.getAttribute('data-domain') === activeDomain);
+      var isActive = b.getAttribute('data-domain') === activeDomain;
+      b.classList.toggle('is-active', isActive);
+      b.setAttribute('aria-expanded', String(isActive && activeDomain !== 'all'));
     });
     var chips = document.querySelectorAll('#atlas-medium-chips .atlas-medium-chip');
     Array.prototype.forEach.call(chips, function (b) {
@@ -120,12 +149,16 @@
     // Works-index bar: .atlas-wi-pill + .atlas-wi-chip
     var wiPills = document.querySelectorAll('#atlas-works-index-filters .atlas-wi-pill');
     Array.prototype.forEach.call(wiPills, function (b) {
-      b.classList.toggle('is-active', b.getAttribute('data-domain') === activeDomain);
+      var isActive = b.getAttribute('data-domain') === activeDomain;
+      b.classList.toggle('is-active', isActive);
+      b.setAttribute('aria-expanded', String(isActive && activeDomain !== 'all'));
     });
     var wiChips = document.querySelectorAll('#atlas-works-index-filters .atlas-wi-chip');
     Array.prototype.forEach.call(wiChips, function (b) {
       b.classList.toggle('is-active', b.getAttribute('data-medium') === activeMedium);
     });
+    updateDisciplinesPanel(domainDisciplinesEl);
+    updateDisciplinesPanel(wiDisciplinesEl);
   }
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (m) { return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; }); }
@@ -275,6 +308,7 @@
   Array.prototype.forEach.call(reveals, function (el) { io.observe(el); });
 
   /* ==================== Init ==================== */
+  syncFilterUI();
   renderRack();
   renderWorksList();
 })();

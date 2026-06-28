@@ -14,6 +14,7 @@ from .common import (
     MD_LINK_RE,
     METRICS_PATH,
     ROOT,
+    DEFAULT_MEDIUM_ID,
     load_json,
     print_items,
 )
@@ -89,7 +90,7 @@ def cmd_validate() -> int:
         return 1
 
     domain_labels, medium_labels, _ = build_label_maps(homepage_data)
-    medium_ids = set(medium_labels)
+    medium_ids = {key for key in medium_labels if key != DEFAULT_MEDIUM_ID}
     seen_folders: set[str] = set()
     seen_titles: set[str] = set()
 

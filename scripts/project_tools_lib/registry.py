@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .common import DATA_PATH, HANDBOOKS_PATH, load_json, save_json
+from .common import DATA_PATH, HANDBOOKS_PATH, DEFAULT_DOMAIN_ID, DEFAULT_MEDIUM_ID, load_json, save_json
 from .homepage import build_label_maps
 
 FIELD_GUIDE = {
@@ -25,7 +25,7 @@ FIELD_EXAMPLES = {
     "folder": "new-work-folder",
     "title": "新作品名",
     "subtitle": "知识手册",
-    "domains": "life, micro",
+    "domains": "natural, applied",
     "medium": "novel, manga, anime",
     "tags": "标签 A, 标签 B",
     "summary": "一句话说明该手册通向什么知识方向。",
@@ -53,6 +53,28 @@ def load_registry() -> list[dict[str, Any]]:
 
 def save_registry_entries(entries: list[dict[str, Any]]) -> None:
     save_json(HANDBOOKS_PATH, entries)
+
+
+def _format_choice_items(labels: dict[str, str], *, skip: set[str] | None = None) -> list[str]:
+    skip = skip or set()
+    return [f"{key}={label}" for key, label in labels.items() if key not in skip]
+
+
+def _load_available_choices() -> tuple[dict[str, str], dict[str, str]]:
+    homepage_data = load_json(DATA_PATH)
+    domain_labels, medium_labels, _ = build_label_maps(homepage_data)
+    configured_medium_values = {
+        str(item.get("value", "")).strip()
+        for item in homepage_data.get("filters", {}).get("medium", [])
+        if str(item.get("value", "")).strip()
+    }
+    domain_choices = {key: label for key, label in domain_labels.items() if key not in {"all", DEFAULT_DOMAIN_ID}}
+    medium_choices = {
+        key: label
+        for key, label in medium_labels.items()
+        if key != "all" and (key != DEFAULT_MEDIUM_ID or key in configured_medium_values)
+    }
+    return domain_choices, medium_choices
 
 
 def split_csv(value: str) -> list[str]:
@@ -137,15 +159,10 @@ def print_registry() -> int:
 
 
 def _show_choices() -> tuple[list[str], list[str]]:
-    homepage_data = load_json(DATA_PATH)
-    domain_labels, medium_labels, _ = build_label_maps(homepage_data)
-    available_domains = [key for key in domain_labels if key != 'uncategorized']
-    available_mediums = [key for key in medium_labels if key != 'other']
-    print("可用领域：", ", ".join(available_domains))
-    print("示例：domains = life, micro")
-    print("可用媒介：", ", ".join(available_mediums))
-    print("示例：medium = novel, manga, anime")
-    return available_domains, available_mediums
+    domain_choices, medium_choices = _load_available_choices()
+    print("可用领域：", ", ".join(_format_choice_items(domain_choices)))
+    print("可用媒介：", ", ".join(_format_choice_items(medium_choices)))
+    return list(domain_choices), list(medium_choices)
 
 
 def print_registry_field_guide() -> None:
@@ -169,6 +186,15 @@ def print_form_section(title: str, keys: list[str], note: str = "") -> None:
 
 def print_field_prompt_intro(key: str) -> None:
     print(f"\n[{key}] {FIELD_GUIDE[key]}")
+    if key in {"domains", "medium"}:
+        domain_choices, medium_choices = _load_available_choices()
+        if key == "domains":
+            print("可选 domains：" + ", ".join(_format_choice_items(domain_choices)))
+            print("填写方式：多个值用英文逗号分隔，例如 natural, applied")
+        else:
+            print("可选 medium：" + ", ".join(_format_choice_items(medium_choices)))
+            print("填写方式：多个值用英文逗号分隔，例如 novel, manga, anime")
+        return
     example = FIELD_EXAMPLES.get(key)
     if example:
         print(f"示例：{key} = {example}")

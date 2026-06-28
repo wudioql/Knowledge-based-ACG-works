@@ -80,13 +80,13 @@ def build_label_maps(data: dict[str, object]) -> tuple[dict[str, str], dict[str,
 
 
 HERO_THEME_COLORS = {
-    "life": "#18968b",
-    "food": "#d56a1b",
-    "micro": "#6a9d32",
-    "society": "#c24b6b",
-    "history": "#a76a2a",
-    "space": "#3f66d8",
-    "misc": "#5c687a",
+    "formal": "#6f63d8",
+    "natural": "#18968b",
+    "social": "#c24b6b",
+    "humanities": "#a76a2a",
+    "applied": "#d56a1b",
+    "other": "#5c687a",
+    "uncategorized": "#7a8494",
 }
 
 
@@ -104,8 +104,13 @@ def split_title_lines(title: str) -> list[str]:
 
 
 DOMAIN_GLYPH = {
-    "life": "生", "food": "食", "micro": "菌",
-    "society": "政", "history": "史", "space": "航",
+    "formal": "理",
+    "natural": "自",
+    "social": "社",
+    "humanities": "文",
+    "applied": "用",
+    "other": "其",
+    "uncategorized": "待",
 }
 
 
@@ -241,7 +246,12 @@ def build_filters(data: dict[str, object], works: list[dict[str, object]]) -> di
     for value in sorted(used_domains - known_domain_values):
         filters["domain"].append({"label": domain_labels.get(value, DEFAULT_DOMAIN_LABEL), "value": value})
 
-    used_mediums = {medium for work in works for medium in work["medium"] if medium != "all"}
+    used_mediums = {
+        medium
+        for work in works
+        for medium in work["medium"]
+        if medium not in {"all", DEFAULT_MEDIUM_ID}
+    }
     known_medium_values = {item["value"] for item in filters["medium"]}
     for value in sorted(used_mediums - known_medium_values):
         filters["medium"].append({"label": medium_labels.get(value, DEFAULT_MEDIUM_LABEL), "value": value})
@@ -265,19 +275,21 @@ def build_domains(data: dict[str, object], works: list[dict[str, object]]) -> li
         rendered["entries"] = entries
         rendered_domains.append(rendered)
 
-    uncategorized_works = [work for work in works if DEFAULT_DOMAIN_ID in work["domains"]]
-    if uncategorized_works:
-        page_total = sum(work["pageCount"] for work in uncategorized_works)
+    fallback_works = [work for work in works if DEFAULT_DOMAIN_ID in work["domains"]]
+    known_domain_ids = {domain["id"] for domain in rendered_domains}
+    if fallback_works and DEFAULT_DOMAIN_ID not in known_domain_ids:
+        page_total = sum(work["pageCount"] for work in fallback_works)
         rendered_domains.append(
             {
                 "id": DEFAULT_DOMAIN_ID,
-                "theme": "misc",
+                "theme": "uncategorized",
                 "code": "DOMAIN 00",
                 "title": DEFAULT_DOMAIN_LABEL,
                 "summary": "当新手册尚未补充完整领域信息时，会先在这里兜底展示，以保证它仍能进入首页系统。",
                 "keywords": ["待补充", "未归类", "低成本接入"],
-                "count": f"{len(uncategorized_works)} 部作品 · {page_total} 个页面 · 等待补充领域信息",
-                "entries": [{"label": f"从《{work['title']}》进入", "href": work["href"]} for work in uncategorized_works],
+                "disciplines": ["尚未登记明确知识领域"],
+                "count": f"{len(fallback_works)} 部作品 · {page_total} 个页面 · 等待补充领域信息",
+                "entries": [{"label": f"从《{work['title']}》进入", "href": work["href"]} for work in fallback_works],
             }
         )
 
@@ -394,13 +406,14 @@ def render_hero(data: dict[str, object], works: list[dict[str, object]], metrics
     site = data["site"]
     hero = site["hero"]
     # Domain pills
-    domain_pills = [f'<button class="atlas-domain-pill is-active" data-domain="all">全部领域</button>']
+    domain_pills = [f'<button class="atlas-domain-pill is-active" data-domain="all" aria-expanded="false">全部领域</button>']
     for d in data["domains"]:
         did = d["id"]
         color = HERO_THEME_COLORS.get(did, "#5c687a")
         domain_pills.append(
-            f'<button class="atlas-domain-pill" data-domain="{e(did)}">'
-            f'<span class="dot" style="background:{color}"></span>{e(d["title"])}</button>'
+            f'<button class="atlas-domain-pill" data-domain="{e(did)}" aria-expanded="false">'
+            f'<span class="dot" style="background:{color}"></span>'
+            f'<span class="atlas-domain-pill__label">{e(d["title"])}</span></button>'
         )
     domain_bar = '\n          '.join(domain_pills)
 
@@ -431,6 +444,7 @@ def render_hero(data: dict[str, object], works: list[dict[str, object]], metrics
         <div class="atlas-domain-bar" id="atlas-domain-bar" role="group" aria-label="按领域筛选">
           {domain_bar}
         </div>
+        <div class="atlas-domain-disciplines" id="atlas-domain-disciplines" aria-live="polite" hidden></div>
 
         <div class="atlas-rack-wrap">
           <div class="atlas-rack" id="atlas-rack" aria-label="档案书架"></div>
@@ -486,6 +500,7 @@ def render_domain_meta_json(data: dict[str, object]) -> str:
             "label": d["title"],
             "colorHex": HERO_THEME_COLORS.get(did, "#5c687a"),
             "glyph": DOMAIN_GLYPH.get(did, "◆"),
+            "disciplines": d.get("disciplines", []),
         }
     import json
     return json.dumps(meta, ensure_ascii=False, indent=2)
@@ -495,9 +510,7 @@ def render_domains_section(domains: list[dict[str, object]], section: dict[str, 
     cards = []
     for domain in domains:
         did = domain["id"]
-        theme = domain.get("theme", "misc")
-        if theme == "misc":
-            theme = "space"  # fallback
+        theme = domain.get("theme", "uncategorized")
         glyph = DOMAIN_GLYPH.get(did, "◆")
         cards.append(
             f"""<div class="atlas-map-card atlas-map-card--{e(theme)}" tabindex="0" role="button" data-domain-key="{e(did)}" aria-label="{e(domain['title'])}，点击筛选书架">
@@ -525,12 +538,13 @@ def render_domains_section(domains: list[dict[str, object]], section: dict[str, 
 def render_works_section(data: dict[str, object], works: list[dict[str, object]], filters: dict[str, list[dict[str, object]]]) -> str:
     section = data["sections"]["worksIndex"]
 
-    # Domain pills for works-index — compact strip style (no dot, smaller text)
-    domain_pills_wi = ['<button class="atlas-wi-pill is-active" data-domain="all">全部</button>']
+    # Domain pills for works-index — compact strip style.
+    domain_pills_wi = ['<button class="atlas-wi-pill is-active" data-domain="all" aria-expanded="false">全部</button>']
     for d in data["domains"]:
         did = d["id"]
         domain_pills_wi.append(
-            f'<button class="atlas-wi-pill" data-domain="{e(did)}">{e(d["title"])}</button>'
+            f'<button class="atlas-wi-pill" data-domain="{e(did)}" aria-expanded="false">'
+            f'<span class="atlas-wi-pill__label">{e(d["title"])}</span></button>'
         )
 
     # Medium chips for works-index — compact strip style; skip "all" (already added manually)
@@ -589,11 +603,12 @@ def render_works_section(data: dict[str, object], works: list[dict[str, object]]
       </div>
       <div class="atlas-works-filters" id="atlas-works-index-filters">
         <div class="atlas-wi-strip">
-          <div class="atlas-wi-group" role="group" aria-label="按领域筛选">
+          <div class="atlas-wi-group atlas-wi-group--domain" role="group" aria-label="按领域筛选">
             <span class="atlas-wi-label">领域</span>
             {' '.join(domain_pills_wi)}
           </div>
-          <div class="atlas-wi-group" role="group" aria-label="按媒介筛选">
+          <div class="atlas-wi-disciplines" id="atlas-wi-disciplines" aria-live="polite" hidden></div>
+          <div class="atlas-wi-group atlas-wi-group--medium" role="group" aria-label="按媒介筛选">
             <span class="atlas-wi-label">媒介</span>
             <button class="atlas-wi-chip is-active" data-medium="all">全部</button> {' '.join(medium_chips_wi)}
           </div>

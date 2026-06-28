@@ -7,20 +7,20 @@
   "uncategorizedHandbooks": 0,
   "fallbackMediumHandbooks": 0,
   "domainCounts": {
-    "life": 1,
-    "food": 2,
-    "micro": 1,
-    "society": 1,
-    "history": 1,
-    "space": 1
+    "formal": 0,
+    "natural": 3,
+    "social": 1,
+    "humanities": 1,
+    "applied": 4,
+    "other": 0
   },
   "domainPageCounts": {
-    "life": 15,
-    "food": 28,
-    "micro": 17,
-    "society": 12,
-    "history": 12,
-    "space": 8
+    "formal": 0,
+    "natural": 40,
+    "social": 12,
+    "humanities": 12,
+    "applied": 51,
+    "other": 0
   },
   "mediumCounts": {
     "manga": 5,
@@ -29,18 +29,19 @@
   },
   "registeredFolders": [
     "cells-at-work",
-    "shokugeki-no-soma",
     "moyashimon",
+    "planet-es",
     "maoyuu",
-    "planet-es"
+    "shokugeki-no-soma"
   ],
   "handbooks": [
     {
       "folder": "cells-at-work",
       "title": "工作细胞",
-      "domain": "life",
+      "domain": "natural",
       "domains": [
-        "life"
+        "natural",
+        "applied"
       ],
       "medium": [
         "manga",
@@ -51,27 +52,12 @@
       "supportPages": 8
     },
     {
-      "folder": "shokugeki-no-soma",
-      "title": "食戟之灵",
-      "domain": "food",
-      "domains": [
-        "food"
-      ],
-      "medium": [
-        "manga",
-        "anime"
-      ],
-      "pageCount": 11,
-      "contentLikePages": 10,
-      "supportPages": 0
-    },
-    {
       "folder": "moyashimon",
       "title": "萌菌物语",
-      "domain": "micro",
+      "domain": "natural",
       "domains": [
-        "micro",
-        "food"
+        "natural",
+        "applied"
       ],
       "medium": [
         "manga",
@@ -82,12 +68,28 @@
       "supportPages": 3
     },
     {
+      "folder": "planet-es",
+      "title": "星空清理者",
+      "domain": "natural",
+      "domains": [
+        "natural",
+        "applied"
+      ],
+      "medium": [
+        "manga",
+        "anime"
+      ],
+      "pageCount": 8,
+      "contentLikePages": 4,
+      "supportPages": 3
+    },
+    {
       "folder": "maoyuu",
       "title": "魔王勇者",
-      "domain": "society",
+      "domain": "social",
       "domains": [
-        "society",
-        "history"
+        "social",
+        "humanities"
       ],
       "medium": [
         "novel",
@@ -99,19 +101,19 @@
       "supportPages": 3
     },
     {
-      "folder": "planet-es",
-      "title": "星空清理者",
-      "domain": "space",
+      "folder": "shokugeki-no-soma",
+      "title": "食戟之灵",
+      "domain": "applied",
       "domains": [
-        "space"
+        "applied"
       ],
       "medium": [
         "manga",
         "anime"
       ],
-      "pageCount": 8,
-      "contentLikePages": 4,
-      "supportPages": 3
+      "pageCount": 11,
+      "contentLikePages": 10,
+      "supportPages": 0
     }
   ]
 }

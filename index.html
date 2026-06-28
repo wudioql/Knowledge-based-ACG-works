@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ACG 知识手册库｜把虚构作品读成现实知识图谱</title>
-  <meta name="description" content="一个以作品为入口、以现实知识为主轴的 ACG 手册项目：从生命科学、料理与发酵，到制度史、社会结构与科幻工程。">
+  <meta name="description" content="一个以作品为入口、以现实知识为主轴的 ACG 手册项目：从形式科学、自然科学、社会科学、人文学科和艺术，到应用科学与职业。">
   <link rel="stylesheet" href="_shared/homepage.css">
 </head>
 <body>
@@ -49,14 +49,15 @@
 
       <div class="atlas-rack-area">
         <div class="atlas-domain-bar" id="atlas-domain-bar" role="group" aria-label="按领域筛选">
-          <button class="atlas-domain-pill is-active" data-domain="all">全部领域</button>
-          <button class="atlas-domain-pill" data-domain="life"><span class="dot" style="background:#18968b"></span>生命、医学与公共卫生</button>
-          <button class="atlas-domain-pill" data-domain="food"><span class="dot" style="background:#d56a1b"></span>食物、料理与食材</button>
-          <button class="atlas-domain-pill" data-domain="micro"><span class="dot" style="background:#6a9d32"></span>微生物、发酵与农食系统</button>
-          <button class="atlas-domain-pill" data-domain="society"><span class="dot" style="background:#c24b6b"></span>政治、经济与制度</button>
-          <button class="atlas-domain-pill" data-domain="history"><span class="dot" style="background:#a76a2a"></span>历史、文明与社会结构</button>
-          <button class="atlas-domain-pill" data-domain="space"><span class="dot" style="background:#3f66d8"></span>科幻、工程与宇宙</button>
+          <button class="atlas-domain-pill is-active" data-domain="all" aria-expanded="false">全部领域</button>
+          <button class="atlas-domain-pill" data-domain="formal" aria-expanded="false"><span class="dot" style="background:#6f63d8"></span><span class="atlas-domain-pill__label">形式科学</span></button>
+          <button class="atlas-domain-pill" data-domain="natural" aria-expanded="false"><span class="dot" style="background:#18968b"></span><span class="atlas-domain-pill__label">自然科学</span></button>
+          <button class="atlas-domain-pill" data-domain="social" aria-expanded="false"><span class="dot" style="background:#c24b6b"></span><span class="atlas-domain-pill__label">社会科学</span></button>
+          <button class="atlas-domain-pill" data-domain="humanities" aria-expanded="false"><span class="dot" style="background:#a76a2a"></span><span class="atlas-domain-pill__label">人文学科和艺术</span></button>
+          <button class="atlas-domain-pill" data-domain="applied" aria-expanded="false"><span class="dot" style="background:#d56a1b"></span><span class="atlas-domain-pill__label">应用科学与职业</span></button>
+          <button class="atlas-domain-pill" data-domain="other" aria-expanded="false"><span class="dot" style="background:#5c687a"></span><span class="atlas-domain-pill__label">其他</span></button>
         </div>
+        <div class="atlas-domain-disciplines" id="atlas-domain-disciplines" aria-live="polite" hidden></div>
 
         <div class="atlas-rack-wrap">
           <div class="atlas-rack" id="atlas-rack" aria-label="档案书架"></div>
@@ -94,35 +95,35 @@
         </div>
       </div>
       <div class="atlas-map-grid" id="atlas-map-grid">
-        <div class="atlas-map-card atlas-map-card--life" tabindex="0" role="button" data-domain-key="life" aria-label="生命、医学与公共卫生，点击筛选书架">
-        <div class="atlas-map-card__top">1 部作品 · 15 个页面 · 适合从身体系统、疾病机制与健康素养入门</div>
-        <h3>生命、医学与公共卫生</h3>
-        <div class="atlas-map-card__glyph">生</div>
+        <div class="atlas-map-card atlas-map-card--formal" tabindex="0" role="button" data-domain-key="formal" aria-label="形式科学，点击筛选书架">
+        <div class="atlas-map-card__top">0 部作品 · 适合从数学、统计、逻辑与计算机科学等形式化体系进入</div>
+        <h3>形式科学</h3>
+        <div class="atlas-map-card__glyph">理</div>
       </div>
-      <div class="atlas-map-card atlas-map-card--food" tabindex="0" role="button" data-domain-key="food" aria-label="食物、料理与食材，点击筛选书架">
-        <div class="atlas-map-card__top">2 部作品 · 28 个页面 · 适合从菜式、技法与食材体系进入</div>
-        <h3>食物、料理与食材</h3>
-        <div class="atlas-map-card__glyph">食</div>
+      <div class="atlas-map-card atlas-map-card--natural" tabindex="0" role="button" data-domain-key="natural" aria-label="自然科学，点击筛选书架">
+        <div class="atlas-map-card__top">3 部作品 · 40 个页面 · 适合从宇宙、生命、物质、能量与地球系统进入</div>
+        <h3>自然科学</h3>
+        <div class="atlas-map-card__glyph">自</div>
       </div>
-      <div class="atlas-map-card atlas-map-card--micro" tabindex="0" role="button" data-domain-key="micro" aria-label="微生物、发酵与农食系统，点击筛选书架">
-        <div class="atlas-map-card__top">1 部作品 · 17 个页面 · 适合从菌、发酵与农业—食品链路进入</div>
-        <h3>微生物、发酵与农食系统</h3>
-        <div class="atlas-map-card__glyph">菌</div>
+      <div class="atlas-map-card atlas-map-card--social" tabindex="0" role="button" data-domain-key="social" aria-label="社会科学，点击筛选书架">
+        <div class="atlas-map-card__top">1 部作品 · 12 个页面 · 适合从历史、社会、经济、政治与群体行为进入</div>
+        <h3>社会科学</h3>
+        <div class="atlas-map-card__glyph">社</div>
       </div>
-      <div class="atlas-map-card atlas-map-card--society" tabindex="0" role="button" data-domain-key="society" aria-label="政治、经济与制度，点击筛选书架">
-        <div class="atlas-map-card__top">1 部作品 · 12 个页面 · 适合从资源分配、治理与制度问题进入</div>
-        <h3>政治、经济与制度</h3>
-        <div class="atlas-map-card__glyph">政</div>
+      <div class="atlas-map-card atlas-map-card--humanities" tabindex="0" role="button" data-domain-key="humanities" aria-label="人文学科和艺术，点击筛选书架">
+        <div class="atlas-map-card__top">1 部作品 · 12 个页面 · 适合从文学、艺术、哲学、宗教与文化表达进入</div>
+        <h3>人文学科和艺术</h3>
+        <div class="atlas-map-card__glyph">文</div>
       </div>
-      <div class="atlas-map-card atlas-map-card--history" tabindex="0" role="button" data-domain-key="history" aria-label="历史、文明与社会结构，点击筛选书架">
-        <div class="atlas-map-card__top">1 部作品 · 12 个页面 · 适合从长时段演变与文明问题进入</div>
-        <h3>历史、文明与社会结构</h3>
-        <div class="atlas-map-card__glyph">史</div>
+      <div class="atlas-map-card atlas-map-card--applied" tabindex="0" role="button" data-domain-key="applied" aria-label="应用科学与职业，点击筛选书架">
+        <div class="atlas-map-card__top">4 部作品 · 51 个页面 · 适合从工程、健康、农业、法律、烹饪与职业实践进入</div>
+        <h3>应用科学与职业</h3>
+        <div class="atlas-map-card__glyph">用</div>
       </div>
-      <div class="atlas-map-card atlas-map-card--space" tabindex="0" role="button" data-domain-key="space" aria-label="科幻、工程与宇宙，点击筛选书架">
-        <div class="atlas-map-card__top">1 部作品 · 8 个页面 · 适合从硬科幻设想与工程问题进入</div>
-        <h3>科幻、工程与宇宙</h3>
-        <div class="atlas-map-card__glyph">航</div>
+      <div class="atlas-map-card atlas-map-card--other" tabindex="0" role="button" data-domain-key="other" aria-label="其他，点击筛选书架">
+        <div class="atlas-map-card__top">0 部作品 · 适合收纳不属于上述五类的知识主题</div>
+        <h3>其他</h3>
+        <div class="atlas-map-card__glyph">其</div>
       </div>
       </div>
     </div>
@@ -138,11 +139,12 @@
       </div>
       <div class="atlas-works-filters" id="atlas-works-index-filters">
         <div class="atlas-wi-strip">
-          <div class="atlas-wi-group" role="group" aria-label="按领域筛选">
+          <div class="atlas-wi-group atlas-wi-group--domain" role="group" aria-label="按领域筛选">
             <span class="atlas-wi-label">领域</span>
-            <button class="atlas-wi-pill is-active" data-domain="all">全部</button> <button class="atlas-wi-pill" data-domain="life">生命、医学与公共卫生</button> <button class="atlas-wi-pill" data-domain="food">食物、料理与食材</button> <button class="atlas-wi-pill" data-domain="micro">微生物、发酵与农食系统</button> <button class="atlas-wi-pill" data-domain="society">政治、经济与制度</button> <button class="atlas-wi-pill" data-domain="history">历史、文明与社会结构</button> <button class="atlas-wi-pill" data-domain="space">科幻、工程与宇宙</button>
+            <button class="atlas-wi-pill is-active" data-domain="all" aria-expanded="false">全部</button> <button class="atlas-wi-pill" data-domain="formal" aria-expanded="false"><span class="atlas-wi-pill__label">形式科学</span></button> <button class="atlas-wi-pill" data-domain="natural" aria-expanded="false"><span class="atlas-wi-pill__label">自然科学</span></button> <button class="atlas-wi-pill" data-domain="social" aria-expanded="false"><span class="atlas-wi-pill__label">社会科学</span></button> <button class="atlas-wi-pill" data-domain="humanities" aria-expanded="false"><span class="atlas-wi-pill__label">人文学科和艺术</span></button> <button class="atlas-wi-pill" data-domain="applied" aria-expanded="false"><span class="atlas-wi-pill__label">应用科学与职业</span></button> <button class="atlas-wi-pill" data-domain="other" aria-expanded="false"><span class="atlas-wi-pill__label">其他</span></button>
           </div>
-          <div class="atlas-wi-group" role="group" aria-label="按媒介筛选">
+          <div class="atlas-wi-disciplines" id="atlas-wi-disciplines" aria-live="polite" hidden></div>
+          <div class="atlas-wi-group atlas-wi-group--medium" role="group" aria-label="按媒介筛选">
             <span class="atlas-wi-label">媒介</span>
             <button class="atlas-wi-chip is-active" data-medium="all">全部</button> <button class="atlas-wi-chip" data-medium="novel">小说</button> <button class="atlas-wi-chip" data-medium="manga">漫画</button> <button class="atlas-wi-chip" data-medium="anime">动画</button> <button class="atlas-wi-chip" data-medium="game">游戏</button>
           </div>
@@ -150,10 +152,10 @@
         </div>
       </div>
       <div class="atlas-works-list" id="atlas-works-list">
-        <div class="atlas-work-row" tabindex="0" data-domain="life" data-medium="manga,anime" style="--atlas-row-accent-bg:#18968b">
+        <div class="atlas-work-row" tabindex="0" data-domain="natural,applied" data-medium="manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #18968b 0.0% 50.0%, #d56a1b 50.0% 100.0%)">
         <div>
           <div class="atlas-work-row__title">工作细胞</div>
-          <div class="atlas-work-row__sub">身体与生命知识手册 · 生命、医学与公共卫生</div>
+          <div class="atlas-work-row__sub">身体与生命知识手册 · 自然科学 · 应用科学与职业</div>
         </div>
         <a class="atlas-work-row__link" href="doc/cells-at-work/index.html">进入 →</a>
         <p class="atlas-work-row__summary">把身体中的运输、免疫、防御与疾病过程组织成可阅读的生命科学入口。</p>
@@ -163,23 +165,10 @@
           <div><strong>结构亮点</strong>原作分卷 + 外传矩阵 + 指导书入口，适合按主题扩展。</div>
         </div>
       </div>
-      <div class="atlas-work-row" tabindex="0" data-domain="food" data-medium="manga,anime" style="--atlas-row-accent-bg:#d56a1b">
-        <div>
-          <div class="atlas-work-row__title">食戟之灵</div>
-          <div class="atlas-work-row__sub">料理内容全鉴 · 食物、料理与食材</div>
-        </div>
-        <a class="atlas-work-row__link" href="doc/shokugeki-no-soma/index.html">进入 →</a>
-        <p class="atlas-work-row__summary">从料理对决与篇章推进中梳理菜式、技法、食材与料理体系。</p>
-        <div class="atlas-work-row__meta">从这里开始：先看总览，再按篇章进入不同料理体系。</div>
-        <div class="atlas-work-row__extra">
-          <div><strong>规模</strong>10 个篇章页</div>
-          <div><strong>结构亮点</strong>按篇章梳理料理与技法，适合按菜系、比赛与主题推进阅读。</div>
-        </div>
-      </div>
-      <div class="atlas-work-row" tabindex="0" data-domain="micro,food" data-medium="manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #6a9d32 0.0% 50.0%, #d56a1b 50.0% 100.0%)">
+      <div class="atlas-work-row" tabindex="0" data-domain="natural,applied" data-medium="manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #18968b 0.0% 50.0%, #d56a1b 50.0% 100.0%)">
         <div>
           <div class="atlas-work-row__title">萌菌物语</div>
-          <div class="atlas-work-row__sub">微生物知识全鉴 · 微生物、发酵与农食系统 · 食物、料理与食材</div>
+          <div class="atlas-work-row__sub">微生物知识全鉴 · 自然科学 · 应用科学与职业</div>
         </div>
         <a class="atlas-work-row__link" href="doc/moyashimon/index.html">进入 →</a>
         <p class="atlas-work-row__summary">从看得见菌的校园故事进入微生物、发酵与食文化的长期脉络。</p>
@@ -189,10 +178,23 @@
           <div><strong>结构亮点</strong>分卷全鉴 + 三方对照，适合从基础菌学一路读到酒与食文化。</div>
         </div>
       </div>
-      <div class="atlas-work-row" tabindex="0" data-domain="society,history" data-medium="novel,manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #c24b6b 0.0% 50.0%, #a76a2a 50.0% 100.0%)">
+      <div class="atlas-work-row" tabindex="0" data-domain="natural,applied" data-medium="manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #18968b 0.0% 50.0%, #d56a1b 50.0% 100.0%)">
+        <div>
+          <div class="atlas-work-row__title">星空清理者</div>
+          <div class="atlas-work-row__sub">航天科学知识手册 · 自然科学 · 应用科学与职业</div>
+        </div>
+        <a class="atlas-work-row__link" href="doc/planet-es/index.html">进入 →</a>
+        <p class="atlas-work-row__summary">把太空垃圾回收、深空计划与个人命运放进真实航天科学与工程语境中阅读。</p>
+        <div class="atlas-work-row__meta">从这里开始：先读首页，再按 4 个阶段追踪叙事与科学主线。</div>
+        <div class="atlas-work-row__extra">
+          <div><strong>规模</strong>4 个分卷阶段 + 人物 / 术语 / 参考</div>
+          <div><strong>结构亮点</strong>动画主轴 + 原作对照 + 科学延伸，适合按近地轨道到深空主线推进。</div>
+        </div>
+      </div>
+      <div class="atlas-work-row" tabindex="0" data-domain="social,humanities" data-medium="novel,manga,anime" style="--atlas-row-accent-bg:linear-gradient(to bottom, #c24b6b 0.0% 50.0%, #a76a2a 50.0% 100.0%)">
         <div>
           <div class="atlas-work-row__title">魔王勇者</div>
-          <div class="atlas-work-row__sub">政治经济学知识手册 · 政治、经济与制度 · 历史、文明与社会结构</div>
+          <div class="atlas-work-row__sub">政治经济学知识手册 · 社会科学 · 人文学科和艺术</div>
         </div>
         <a class="atlas-work-row__link" href="doc/maoyuu/index.html">进入 →</a>
         <p class="atlas-work-row__summary">以异世界叙事映射战争、农业、货币、贸易与制度演化。</p>
@@ -202,17 +204,17 @@
           <div><strong>结构亮点</strong>分卷阅读 + 辅助卷宗，适合把情节、术语、势力与参考材料一起读。</div>
         </div>
       </div>
-      <div class="atlas-work-row" tabindex="0" data-domain="space" data-medium="manga,anime" style="--atlas-row-accent-bg:#3f66d8">
+      <div class="atlas-work-row" tabindex="0" data-domain="applied" data-medium="manga,anime" style="--atlas-row-accent-bg:#d56a1b">
         <div>
-          <div class="atlas-work-row__title">星空清理者</div>
-          <div class="atlas-work-row__sub">航天科学知识手册 · 科幻、工程与宇宙</div>
+          <div class="atlas-work-row__title">食戟之灵</div>
+          <div class="atlas-work-row__sub">料理内容全鉴 · 应用科学与职业</div>
         </div>
-        <a class="atlas-work-row__link" href="doc/planet-es/index.html">进入 →</a>
-        <p class="atlas-work-row__summary">把太空垃圾回收、深空计划与个人命运放进真实航天科学与工程语境中阅读。</p>
-        <div class="atlas-work-row__meta">从这里开始：先读首页，再按 4 个阶段追踪叙事与科学主线。</div>
+        <a class="atlas-work-row__link" href="doc/shokugeki-no-soma/index.html">进入 →</a>
+        <p class="atlas-work-row__summary">从料理对决与篇章推进中梳理菜式、技法、食材与料理体系。</p>
+        <div class="atlas-work-row__meta">从这里开始：先看总览，再按篇章进入不同料理体系。</div>
         <div class="atlas-work-row__extra">
-          <div><strong>规模</strong>4 个分卷阶段 + 人物 / 术语 / 参考</div>
-          <div><strong>结构亮点</strong>动画主轴 + 原作对照 + 科学延伸，适合按近地轨道到深空主线推进。</div>
+          <div><strong>规模</strong>10 个篇章页</div>
+          <div><strong>结构亮点</strong>按篇章梳理料理与技法，适合按菜系、比赛与主题推进阅读。</div>
         </div>
       </div>
       </div>
@@ -233,7 +235,7 @@
       </div>
       <div class="atlas-path-card">
         <div class="atlas-path-card__num">02</div>
-        <div><h3>主题切入</h3><p>对生命、料理、制度史或宇宙工程好奇？先在知识地图选定领域，再用一部作品当入门载体。</p></div>
+        <div><h3>主题切入</h3><p>对自然机制、社会制度、人文表达或应用实践好奇？先在知识地图选定领域，再用一部作品当入门载体。</p></div>
       </div>
       <div class="atlas-path-card">
         <div class="atlas-path-card__num">03</div>
@@ -309,7 +311,8 @@
     "title": "工作细胞",
     "subtitle": "身体与生命知识手册",
     "domains": [
-      "life"
+      "natural",
+      "applied"
     ],
     "medium": [
       "manga",
@@ -331,37 +334,12 @@
     "href": "doc/cells-at-work/index.html"
   },
   {
-    "folder": "shokugeki-no-soma",
-    "title": "食戟之灵",
-    "subtitle": "料理内容全鉴",
-    "domains": [
-      "food"
-    ],
-    "medium": [
-      "manga",
-      "anime"
-    ],
-    "tags": [
-      "漫画",
-      "动画",
-      "料理体系",
-      "烹饪技法",
-      "食材科学",
-      "世界料理"
-    ],
-    "summary": "从料理对决与篇章推进中梳理菜式、技法、食材与料理体系。",
-    "startHere": "先看总览，再按篇章进入不同料理体系。",
-    "scale": "10 个篇章页",
-    "structure": "按篇章梳理料理与技法，适合按菜系、比赛与主题推进阅读。",
-    "href": "doc/shokugeki-no-soma/index.html"
-  },
-  {
     "folder": "moyashimon",
     "title": "萌菌物语",
     "subtitle": "微生物知识全鉴",
     "domains": [
-      "micro",
-      "food"
+      "natural",
+      "applied"
     ],
     "medium": [
       "manga",
@@ -382,12 +360,38 @@
     "href": "doc/moyashimon/index.html"
   },
   {
+    "folder": "planet-es",
+    "title": "星空清理者",
+    "subtitle": "航天科学知识手册",
+    "domains": [
+      "natural",
+      "applied"
+    ],
+    "medium": [
+      "manga",
+      "anime"
+    ],
+    "tags": [
+      "漫画",
+      "动画",
+      "轨道力学",
+      "航天工程",
+      "空间环境",
+      "硬科幻"
+    ],
+    "summary": "把太空垃圾回收、深空计划与个人命运放进真实航天科学与工程语境中阅读。",
+    "startHere": "先读首页，再按 4 个阶段追踪叙事与科学主线。",
+    "scale": "4 个分卷阶段 + 人物 / 术语 / 参考",
+    "structure": "动画主轴 + 原作对照 + 科学延伸，适合按近地轨道到深空主线推进。",
+    "href": "doc/planet-es/index.html"
+  },
+  {
     "folder": "maoyuu",
     "title": "魔王勇者",
     "subtitle": "政治经济学知识手册",
     "domains": [
-      "society",
-      "history"
+      "social",
+      "humanities"
     ],
     "medium": [
       "novel",
@@ -410,11 +414,11 @@
     "href": "doc/maoyuu/index.html"
   },
   {
-    "folder": "planet-es",
-    "title": "星空清理者",
-    "subtitle": "航天科学知识手册",
+    "folder": "shokugeki-no-soma",
+    "title": "食戟之灵",
+    "subtitle": "料理内容全鉴",
     "domains": [
-      "space"
+      "applied"
     ],
     "medium": [
       "manga",
@@ -423,50 +427,113 @@
     "tags": [
       "漫画",
       "动画",
-      "轨道力学",
-      "航天工程",
-      "空间环境",
-      "硬科幻"
+      "料理体系",
+      "烹饪技法",
+      "食材科学",
+      "世界料理"
     ],
-    "summary": "把太空垃圾回收、深空计划与个人命运放进真实航天科学与工程语境中阅读。",
-    "startHere": "先读首页，再按 4 个阶段追踪叙事与科学主线。",
-    "scale": "4 个分卷阶段 + 人物 / 术语 / 参考",
-    "structure": "动画主轴 + 原作对照 + 科学延伸，适合按近地轨道到深空主线推进。",
-    "href": "doc/planet-es/index.html"
+    "summary": "从料理对决与篇章推进中梳理菜式、技法、食材与料理体系。",
+    "startHere": "先看总览，再按篇章进入不同料理体系。",
+    "scale": "10 个篇章页",
+    "structure": "按篇章梳理料理与技法，适合按菜系、比赛与主题推进阅读。",
+    "href": "doc/shokugeki-no-soma/index.html"
   }
 ]
   </script>
   <script id="atlas-domain-meta" type="application/json">
 {
-  "life": {
-    "label": "生命、医学与公共卫生",
+  "formal": {
+    "label": "形式科学",
+    "colorHex": "#6f63d8",
+    "glyph": "理",
+    "disciplines": [
+      "数学",
+      "统计学",
+      "系统科学",
+      "计算机科学",
+      "逻辑"
+    ]
+  },
+  "natural": {
+    "label": "自然科学",
     "colorHex": "#18968b",
-    "glyph": "生"
+    "glyph": "自",
+    "disciplines": [
+      "太空科学",
+      "生命科学",
+      "化学",
+      "物理学",
+      "地球科学"
+    ]
   },
-  "food": {
-    "label": "食物、料理与食材",
-    "colorHex": "#d56a1b",
-    "glyph": "食"
-  },
-  "micro": {
-    "label": "微生物、发酵与农食系统",
-    "colorHex": "#6a9d32",
-    "glyph": "菌"
-  },
-  "society": {
-    "label": "政治、经济与制度",
+  "social": {
+    "label": "社会科学",
     "colorHex": "#c24b6b",
-    "glyph": "政"
+    "glyph": "社",
+    "disciplines": [
+      "历史学",
+      "地理学",
+      "心理学",
+      "社会学",
+      "经济学",
+      "政治学",
+      "人类学",
+      "语言学",
+      "考古学",
+      "性学",
+      "文化与种族研究"
+    ]
   },
-  "history": {
-    "label": "历史、文明与社会结构",
+  "humanities": {
+    "label": "人文学科和艺术",
     "colorHex": "#a76a2a",
-    "glyph": "史"
+    "glyph": "文",
+    "disciplines": [
+      "区域研究",
+      "视觉艺术",
+      "文学",
+      "表演艺术",
+      "哲学",
+      "宗教研究"
+    ]
   },
-  "space": {
-    "label": "科幻、工程与宇宙",
-    "colorHex": "#3f66d8",
-    "glyph": "航"
+  "applied": {
+    "label": "应用科学与职业",
+    "colorHex": "#d56a1b",
+    "glyph": "用",
+    "disciplines": [
+      "农业",
+      "工商管理",
+      "企业",
+      "语言",
+      "神学",
+      "建筑与设计",
+      "教育",
+      "工程学",
+      "家政学",
+      "环境研究与林业",
+      "健康科学",
+      "新闻学、媒体研究和传播学",
+      "法律",
+      "图书馆与博物馆研究",
+      "军事学",
+      "公共行政",
+      "美食学与烹饪学",
+      "社会工作",
+      "交通运输"
+    ]
+  },
+  "other": {
+    "label": "其他",
+    "colorHex": "#5c687a",
+    "glyph": "其",
+    "disciplines": [
+      "不属于上述五类的知识主题",
+      "健身",
+      "野外生存",
+      "生活技能",
+      "兴趣实践"
+    ]
   }
 }
   </script>

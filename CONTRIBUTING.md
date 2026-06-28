@@ -158,7 +158,7 @@ python scripts/project_tools.py menu
   "folder": "new-work-folder",
   "title": "新作品名",
   "subtitle": "知识手册",
-  "domains": ["food", "micro"],
+  "domains": ["natural", "applied"],
   "medium": ["manga", "anime"],
   "tags": ["示例标签 A", "示例标签 B"],
   "summary": "一句话说明该手册通向什么知识方向。",
@@ -173,19 +173,19 @@ python scripts/project_tools.py menu
 ## 4. `domain` 与 `medium` 的建议值
 
 ### `domains`
-当前首页支持更通用的知识领域分组，常用值包括：
+当前首页按「学术领域大纲」组织知识领域，并额外提供 `other / 其他` 作为兜底分类。可用值包括：
 
-- `life`
-- `food`
-- `micro`
-- `society`
-- `history`
-- `space`
+- `formal`：形式科学
+- `natural`：自然科学
+- `social`：社会科学
+- `humanities`：人文学科和艺术
+- `applied`：应用科学与职业
+- `other`：其他
 
 推荐写成数组，例如：
 
 ```json
-"domains": ["food", "micro"]
+"domains": ["natural", "applied"]
 ```
 
 如果不填写：
